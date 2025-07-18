@@ -1,3 +1,0 @@
-@echo off
-echo Installing AutoShutdown...
-powershell -ExecutionPolicy Bypass -File "%~dp0INSTALL_NOW.ps1"

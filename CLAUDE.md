@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AutoShutdown is a Windows background application that monitors keyboard/mouse activity and forces computer shutdown after 5 minutes of inactivity. It runs as a background process with no UI and auto-starts with Windows.
 
-**CRITICAL**: The application performs immediate forced shutdown (`shutdown /s /t 0 /f`) without warning, which can cause data loss. This differs from the README which mentions a 30-second warning.
+**CRITICAL**: The application now uses Windows native shutdown dialog (`shutdown /s /t 30 /c "message"`), providing a 30-second warning that users can cancel.
 
 ## Build Commands
 
@@ -43,7 +43,7 @@ Installation creates:
 ## Key Implementation Details
 
 - **Inactivity timeout**: Hardcoded to 300 seconds (5 minutes)
-- **Shutdown command**: `shutdown /s /t 0 /f` (immediate, forced, no warning)
+- **Shutdown command**: `shutdown /s /t 30 /c "message"` (30-second warning with cancel option)
 - **PyInstaller flags**: `--onefile --noconsole --uac-admin`
 - **Hidden imports**: `pynput.keyboard._win32`, `pynput.mouse._win32`
 

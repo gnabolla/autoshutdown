@@ -52,9 +52,9 @@ python auto_shutdown.py
 
 1. The program runs silently in the background
 2. It monitors all keyboard and mouse activity
-3. After 5 minutes of no activity, it initiates Windows shutdown
-4. You get a 30-second warning to save your work
-5. To cancel shutdown, open Command Prompt and type: `shutdown /a`
+3. After 5 minutes of no activity, Windows shows a shutdown warning
+4. You get a 30-second countdown dialog to save your work
+5. To cancel shutdown: Close the dialog or run `shutdown /a` in Command Prompt
 
 ## System Requirements
 
