@@ -84,14 +84,77 @@ public class IdleTime {
 }
 "@
 
+# Create warning form
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+
+$warningShown = $false
+
 while ($true) {
     $idle = [IdleTime]::GetIdleTime()
-    if ($idle -ge 300) {
-        # Force immediate shutdown - no countdown, no warning
-        shutdown /s /t 0 /f
-        break
+    if ($idle -ge 300 -and -not $warningShown) {
+        $warningShown = $true
+        
+        # Create and show warning form
+        $form = New-Object System.Windows.Forms.Form
+        $form.Text = "Inactivity Warning"
+        $form.Size = New-Object System.Drawing.Size(400,200)
+        $form.StartPosition = "CenterScreen"
+        $form.TopMost = $true
+        $form.FormBorderStyle = "FixedDialog"
+        $form.MaximizeBox = $false
+        $form.MinimizeBox = $false
+        
+        $label = New-Object System.Windows.Forms.Label
+        $label.Location = New-Object System.Drawing.Point(50,30)
+        $label.Size = New-Object System.Drawing.Size(300,20)
+        $label.Text = "System will shutdown due to inactivity!"
+        $label.Font = New-Object System.Drawing.Font("Arial",12,[System.Drawing.FontStyle]::Bold)
+        $label.ForeColor = "Red"
+        $form.Controls.Add($label)
+        
+        $countdownLabel = New-Object System.Windows.Forms.Label
+        $countdownLabel.Location = New-Object System.Drawing.Point(100,60)
+        $countdownLabel.Size = New-Object System.Drawing.Size(200,20)
+        $countdownLabel.Text = "Shutting down in 30 seconds"
+        $countdownLabel.Font = New-Object System.Drawing.Font("Arial",10)
+        $form.Controls.Add($countdownLabel)
+        
+        $instructionLabel = New-Object System.Windows.Forms.Label
+        $instructionLabel.Location = New-Object System.Drawing.Point(50,90)
+        $instructionLabel.Size = New-Object System.Drawing.Size(300,20)
+        $instructionLabel.Text = "Move mouse or press any key to continue using"
+        $instructionLabel.Font = New-Object System.Drawing.Font("Arial",9)
+        $instructionLabel.ForeColor = "Blue"
+        $form.Controls.Add($instructionLabel)
+        
+        $countdown = 30
+        $timer = New-Object System.Windows.Forms.Timer
+        $timer.Interval = 1000
+        $timer.Add_Tick({
+            $script:countdown--
+            $countdownLabel.Text = "Shutting down in $script:countdown seconds"
+            
+            # Check if user became active
+            if ([IdleTime]::GetIdleTime() -lt 2) {
+                $timer.Stop()
+                $form.Close()
+                $script:warningShown = $false
+            }
+            elseif ($script:countdown -le 0) {
+                $timer.Stop()
+                $form.Close()
+                shutdown /s /t 0 /f
+            }
+        })
+        
+        $timer.Start()
+        $form.ShowDialog()
     }
-    Start-Sleep -Seconds 10
+    elseif ($idle -lt 300) {
+        $warningShown = $false
+    }
+    Start-Sleep -Seconds 5
 }
 '@
 
