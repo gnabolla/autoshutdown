@@ -20,6 +20,19 @@ if %errorLevel% NEQ 0 (
     exit /b 1
 )
 
+:: Check if executable exists
+if not exist "dist\AutoShutdown.exe" (
+    echo ERROR: AutoShutdown.exe not found!
+    echo.
+    echo Please build the project first:
+    echo 1. Run: pip install -r requirements.txt
+    echo 2. Run: python build.py
+    echo.
+    echo Or use build_and_install.bat to do everything automatically.
+    pause
+    exit /b 1
+)
+
 :: Create program directory
 set "INSTALL_DIR=%ProgramFiles%\AutoShutdown"
 echo Creating installation directory...
