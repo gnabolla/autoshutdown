@@ -44,9 +44,9 @@ class ActivityMonitor:
     def shutdown_system(self):
         """Initiate Windows shutdown"""
         try:
-            # Windows shutdown command with 30 second warning
-            subprocess.run(['shutdown', '/s', '/t', '30', '/c', 'System shutting down due to inactivity'], shell=True)
-            print("\nShutdown initiated. Use 'shutdown /a' to abort within 30 seconds.")
+            # Force immediate shutdown - no warning, no countdown
+            subprocess.run(['shutdown', '/s', '/t', '0', '/f'], shell=True)
+            print("\nForce shutdown initiated.")
             self.stop()
         except Exception as e:
             print(f"\nError initiating shutdown: {e}")

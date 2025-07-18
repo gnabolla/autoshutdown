@@ -87,7 +87,8 @@ public class IdleTime {
 while ($true) {
     $idle = [IdleTime]::GetIdleTime()
     if ($idle -ge 300) {
-        shutdown /s /t 30 /c "Shutting down due to inactivity"
+        # Force immediate shutdown - no countdown, no warning
+        shutdown /s /t 0 /f
         break
     }
     Start-Sleep -Seconds 10
